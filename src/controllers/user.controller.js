@@ -86,7 +86,7 @@ const loginUser = async (req, res) => {
             httpOnly: true,
             sameSite: 'lax',
             expires: new Date(Date.now() + 3_600_000),
-            secure: process.env.NODE_ENV === 'production'
+            secure: true
         })
 
         return res.status(201).json({
