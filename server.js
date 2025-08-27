@@ -15,7 +15,7 @@ app.use(express.json())
 app.use(cookieParser())
 app.use('/uploads', express.static('uploads'))
 app.use(cors({
-    origin: ['https://lms-frontend-vt4e.vercel.app/',process.env.CORS_ORIGIN],
+    origin: 'https://lms-frontend-vt4e.vercel.app/',
     credentials: true
 }))
 
