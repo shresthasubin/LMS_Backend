@@ -21,7 +21,7 @@ const registerUser = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // setting profile image only if provided by user else default profile
-        const profileImageLocalPath = path.resolve(req.file?.path)
+        const profileImageLocalPath = req.file?.path
         // console.log(profileImageLocalPath)
         if (!profileImageLocalPath) {
             return res.status(404).json({
@@ -241,8 +241,8 @@ const updateUser = async (req, res) => {
         if (user.password) {
             user.password = await bcrypt.hash(user.password, 10)
         }
-        const profileImageLocalPath = path.resolve(req.file?.path)
-        console.log(profileImageLocalPath)
+        const profileImageLocalPath = req.file?.path
+        // console.log(profileImageLocalPath)
         if (!profileImageLocalPath) {
             return res.status(404).json({
                 success: false,
