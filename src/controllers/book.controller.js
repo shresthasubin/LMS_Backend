@@ -80,24 +80,28 @@ const updateBook = async (req, res) => {
         const {id} = req.params
         const book = await Borrow.find({bookId: id})
         const { title, author, isbn, quantity, description } = req.body
-        const bookImageLocalPath = req.file?.path
-        console.log(bookImageLocalPath)
-        if (!bookImageLocalPath) {
-            return res.status(404).json({
-                success: false,
-                message: 'Localpath doesnot found'
-            })
+        let bookImageUrl
+        if (req.file) {
+            const bookImageLocalPath = req.file?.path
+            console.log(bookImageLocalPath)
+            if (!bookImageLocalPath) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Localpath doesnot found'
+                })
+            }
+    
+            const bookImage = await uploadOnCloudinary(bookImageLocalPath)
+            if (!bookImage) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Image doesnot upload on cloudinary'
+                })
+            }
+            bookImageUrl = bookImage.secure_url
         }
 
-        const bookImage = await uploadOnCloudinary(bookImageLocalPath)
-        if (!bookImage) {
-            return res.status(400).json({
-                success: false,
-                message: 'Image doesnot upload on cloudinary'
-            })
-        }
-
-        const updatedBook = await Book.findByIdAndUpdate(id, {title, author, isbn, quantity, available: quantity - book.length, bookImage: bookImage?.secure_url, description}, {new: true, runValidators: true})
+        const updatedBook = await Book.findByIdAndUpdate(id, {title, author, isbn, quantity, available: quantity - book.length, ...(bookImageUrl && {bookImage: bookImageUrl}), description}, {new: true, runValidators: true})
 
         if (!updatedBook) {
             return res.status(404).json({

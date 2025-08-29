@@ -239,26 +239,32 @@ const updateUser = async (req, res) => {
     try {
         const user = req.body
         const {id} = req.params
+        let profileImageUrl
 
         if (user.password) {
             user.password = await bcrypt.hash(user.password, 10)
         }
-        const profileImageLocalPath = req.file?.path
-        // console.log(profileImageLocalPath)
-        if (!profileImageLocalPath) {
-            return res.status(404).json({
-                success: false,
-                message: 'Localpath doesnot found'
-            })
-        }
 
-        const profileImage = await uploadOnCloudinary(profileImageLocalPath)
-        // console.log('profileimage', profileImage)
-        if (!profileImage) {
-            return res.status(400).json({
-                success: false,
-                message: 'Image doesnot upload on cloudinary'
-            })
+        if (req.file) {
+            const profileImageLocalPath = req.file?.path
+            // console.log(profileImageLocalPath)
+            if (!profileImageLocalPath) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Localpath doesnot found'
+                })
+            }
+    
+            const profileImage = await uploadOnCloudinary(profileImageLocalPath)
+            // console.log('profileimage', profileImage)
+            if (!profileImage) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Image doesnot upload on cloudinary'
+                })
+            }
+            profileImageUrl = profileImage.secure_url
+
         }
 
         const updatedUser = await User.findByIdAndUpdate(
@@ -266,7 +272,7 @@ const updateUser = async (req, res) => {
             {
                 ...user, 
                 role: req.user.role === 'librarian' ? 'librarian' : 'borrower',
-                profileImage: profileImage.secure_url
+                ...(profileImageUrl && {profileImage: profileImageUrl})
             }, 
             {
                 new: true,
