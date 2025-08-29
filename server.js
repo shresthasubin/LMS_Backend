@@ -7,7 +7,11 @@ import bcrypt from 'bcryptjs'
 import User from './src/models/user.model.js'
 import cors from 'cors'
 
-dotenv.config()
+dotenv.config(
+    {
+        path: './.env'
+    }
+)
 
 const port = process.env.PORT || 3000
 const app = express()
