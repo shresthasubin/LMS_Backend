@@ -245,13 +245,6 @@ const updateUser = async (req, res) => {
             user.password = await bcrypt.hash(user.password, 10)
         }
 
-        if (user.email) {
-            return res.status(400).json({
-                success: false,
-                message: 'Email cannot be changed'
-            })
-        }
-
         if (req.file) {
             const profileImageLocalPath = req.file?.path
             // console.log(profileImageLocalPath)
