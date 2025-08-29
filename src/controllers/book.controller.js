@@ -1,6 +1,7 @@
 import Book from '../models/book.model.js'
 import Borrow from '../models/borrow.model.js'
 import { uploadOnCloudinary } from '../utils/cloudinary.js'
+import path from 'path'
 
 const addBook = async (req, res) => {
     try {
@@ -14,8 +15,8 @@ const addBook = async (req, res) => {
 
         const rating = 0
 
-        const bookImageLocalPath = req.file?.path
-        console.log(bookImageLocalPath)
+        const bookImageLocalPath = path.resolve(req.file?.path)
+        // console.log(bookImageLocalPath)
         if (!bookImageLocalPath) {
             return res.status(404).json({
                 success: false,
@@ -79,7 +80,7 @@ const updateBook = async (req, res) => {
         const {id} = req.params
         const book = await Borrow.find({bookId: id})
         const { title, author, isbn, quantity, description } = req.body
-        const bookImageLocalPath = req.file?.path
+        const bookImageLocalPath = path.resolve(req.file?.path)
         console.log(bookImageLocalPath)
         if (!bookImageLocalPath) {
             return res.status(404).json({
