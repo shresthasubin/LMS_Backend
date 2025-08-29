@@ -31,7 +31,7 @@ const registerUser = async (req, res) => {
         }
 
         const profileImage = await uploadOnCloudinary(profileImageLocalPath)
-        console.log('profileimage', profileImage)
+        // console.log('profileimage', profileImage)
         if (!profileImage) {
             return res.status(400).json({
                 success: false,
@@ -251,20 +251,20 @@ const updateUser = async (req, res) => {
         }
 
         const profileImage = await uploadOnCloudinary(profileImageLocalPath)
-        console.log('profileimage', profileImage)
+        // console.log('profileimage', profileImage)
         if (!profileImage) {
             return res.status(400).json({
                 success: false,
                 message: 'Image doesnot upload on cloudinary'
             })
         }
-        
+
         const updatedUser = await User.findByIdAndUpdate(
             id, 
             {
                 ...user, 
                 role: req.user.role === 'librarian' ? 'librarian' : 'borrower',
-                profileImage: profileImage
+                profileImage: profileImage.secure_url
             }, 
             {
                 new: true,
