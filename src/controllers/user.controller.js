@@ -1,7 +1,6 @@
 import User from '../models/user.model.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken'
-import path from 'path'
 
 const registerUser = async (req, res) => {
     try {
@@ -242,7 +241,7 @@ const updateUser = async (req, res) => {
         if (user.password) {
             user.password = await bcrypt.hash(user.password, 10)
         }
-        const profileImageLocalPath = path.resolve(req.file?.path)
+        const profileImageLocalPath = req.file?.path
         // console.log(profileImageLocalPath)
         if (!profileImageLocalPath) {
             return res.status(404).json({
