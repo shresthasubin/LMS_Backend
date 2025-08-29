@@ -21,10 +21,25 @@ const registerUser = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // setting profile image only if provided by user else default profile
-        const profileImage = req.file?.path
+        const profileImageLocalPath = path.resolve(req.file?.path)
+        // console.log(profileImageLocalPath)
+        if (!profileImageLocalPath) {
+            return res.status(404).json({
+                success: false,
+                message: 'Localpath doesnot found'
+            })
+        }
 
+        const profileImage = await uploadOnCloudinary(profileImageLocalPath)
+        console.log('profileimage', profileImage)
+        if (!profileImage) {
+            return res.status(400).json({
+                success: false,
+                message: 'Image doesnot upload on cloudinary'
+            })
+        }
         // creating and saving data 
-        const userData = new User({email, password: hashedPassword, role, name, profileImage})
+        const userData = new User({ email, password: hashedPassword, role, name, profileImage: profileImage?.secure_url })
         await userData.save()
 
         // finding the same data to show user without password 
@@ -226,7 +241,24 @@ const updateUser = async (req, res) => {
         if (user.password) {
             user.password = await bcrypt.hash(user.password, 10)
         }
-        const profileImage = req.file?.path
+        const profileImageLocalPath = path.resolve(req.file?.path)
+        console.log(profileImageLocalPath)
+        if (!profileImageLocalPath) {
+            return res.status(404).json({
+                success: false,
+                message: 'Localpath doesnot found'
+            })
+        }
+
+        const profileImage = await uploadOnCloudinary(profileImageLocalPath)
+        console.log('profileimage', profileImage)
+        if (!profileImage) {
+            return res.status(400).json({
+                success: false,
+                message: 'Image doesnot upload on cloudinary'
+            })
+        }
+        
         const updatedUser = await User.findByIdAndUpdate(
             id, 
             {

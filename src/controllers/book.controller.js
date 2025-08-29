@@ -12,7 +12,23 @@ const addBook = async (req, res) => {
         }
 
         const rating = 0
-        const bookImage = req.file?.path
+
+        const bookImageLocalPath = path.resolve(req.file?.path)
+        console.log(bookImageLocalPath)
+        if (!bookImageLocalPath) {
+            return res.status(404).json({
+                success: false,
+                message: 'Localpath doesnot found'
+            })
+        }
+
+        const bookImage = await uploadOnCloudinary(bookImageLocalPath)
+        if (!bookImage) {
+            return res.status(400).json({
+                success: false,
+                message: 'Image doesnot upload on cloudinary'
+            })
+        }
 
         const newBook = new Book({
             title,
