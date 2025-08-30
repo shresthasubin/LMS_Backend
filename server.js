@@ -19,7 +19,7 @@ app.use(express.json())
 app.use(cookieParser())
 app.use('/uploads', express.static('uploads'))
 app.use(cors({
-    origin: 'https://lms-frontend-vt4e.vercel.app',
+    origin: ['https://lms-frontend-vt4e.vercel.app', 'http://localhost:8081'],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true
 }))
